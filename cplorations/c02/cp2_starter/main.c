@@ -119,11 +119,18 @@ int vowels(char* txt) {
  */
 int quartile(char* name) {
 
-	if (strcmp(name, "G") < 0); return 1;
+	if (strcmp(name, "G") < 0) {
+		return 1;
+	}
 
-	if(strcmp(name, "M") < 0); return 2;
+	if(strcmp(name, "M") < 0) {
 
-	if(strcmp(name, "S") < 0); return 3;
+		return 2;
+	} 
+
+	if(strcmp(name, "S") < 0) {
+		return 3;
+	} 
 	
 	return 4; 
 }
