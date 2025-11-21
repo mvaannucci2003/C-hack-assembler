@@ -1,0 +1,21 @@
+# --- Build Artifacts (The Output) ---
+*.exe
+*.o
+*.obj
+*.dll
+*.so
+*.dylib
+*.a
+*.out
+*.app
+
+# --- IDE Settings (The Personal Configs) ---
+.idea/
+.vscode/
+*.swp
+*.swo
+*.iml
+
+# --- OS Junk ---
+.DS_Store
+Thumbs.db
