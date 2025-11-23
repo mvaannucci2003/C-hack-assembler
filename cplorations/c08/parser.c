@@ -89,6 +89,7 @@ void parse(FILE *file)
 		{
 			char n_label[MAX_LABEL_LENGTH] = {0};
 			extract_label(line, n_label);
+			strcpy(line, extract_label(line, n_label));
 			if (!isalpha(n_label[0]))
 			{
 				exit_program(EXIT_INVALID_LABEL, line_num, line);
