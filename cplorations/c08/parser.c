@@ -57,8 +57,7 @@ void parse(FILE *file)
 	while (fgets(line, sizeof(line), file))
 	{
 		line_num++;
-
-		if (instr_num > MAX_INSTRUCTIONS)
+		if (instr_num >= MAX_INSTRUCTIONS)
 		{
 			exit_program(EXIT_TOO_MANY_INSTRUCTIONS, MAX_INSTRUCTIONS + 1);
 		}
@@ -92,22 +91,19 @@ void parse(FILE *file)
 			strcpy(line, extract_label(line, n_label));
 			if (!isalpha(n_label[0]))
 			{
-				exit_program(EXIT_INVALID_LABEL, line_num, line);
-			};
+				exit_program(EXIT_INVALID_LABEL, line_num, n_label);
+			}
 			if (symtable_find(n_label) != NULL)
 			{
+				exit_program(EXIT_SYMBOL_ALREADY_EXISTS, line_num, n_label);
+			}
 
-				exit_program(EXIT_SYMBOL_ALREADY_EXISTS, line_num, line);
-			};
-			strcpy(line, n_label);
 			symtable_insert(n_label, instr_num);
 			continue;
 		}
-		else
-		{
-			instr_num++;
-		}
+
 		printf("%u: %c  %s\n", instr_num, inst_type, line);
+		instr_num++;
 	}
 }
 
