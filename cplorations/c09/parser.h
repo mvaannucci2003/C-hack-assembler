@@ -13,6 +13,7 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <hack.h>
 
 typedef int16_t hack_addr;
 typedef int16_t opcode;

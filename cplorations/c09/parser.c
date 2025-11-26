@@ -1,10 +1,3 @@
-/****************************************
- * C-ploration 4 for CS 271
- *
- * [NAME] Marc Vannucci
- * [TERM] FALL 2025
- *
- ****************************************/
 #include "parser.h"
 #include "symtable.h"
 #include "error.h"
@@ -126,7 +119,6 @@ bool is_label(const char *line)
 {
 	char target_1 = line[0];
 	char target_2 = line[strlen(line) - 1];
-	// printf("DEBUG is_label: target_1='%c' target_2='%c' (ASCII: %d)\n", target_1, target_2, target_2);
 	if (target_1 == '(' && target_2 == ')')
 	{
 		return true;
@@ -162,4 +154,13 @@ char *extract_label(const char *line, char *label)
 
 	label[i] = '\0';
 	return label;
+}
+
+/* Function for loading predefined symbols. */
+void add_predefined_symbols()
+{
+	int symbols_array = strlen(predefined_symbols);
+	for (int i = 0; i < NUM_PREDEFINED_SYMBOLS; i++)
+	{
+	}
 }
