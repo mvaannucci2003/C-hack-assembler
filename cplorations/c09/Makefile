@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -I.
-LDFLAGS = 
+LDFLAGS =
 OBJFILES = main.o parser.o symtable.o error.o
 TARGET = main
 
@@ -10,5 +10,5 @@ $(TARGET): $(OBJFILES)
 	$(CC) $(CFLAGS) -o $(TARGET) $(OBJFILES) $(LDFLAGS)
 
 clean:
-	rm -Force $(OBJFILES) $(TARGET) *~
+	rm --force $(OBJFILES) $(TARGET) *~
 

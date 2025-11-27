@@ -47,6 +47,7 @@ void parse(FILE *file)
 	char line[MAX_LINE_LENGTH] = {0};
 	int instr_num = 0;
 	int line_num = 0;
+	add_predefined_symbols();
 	while (fgets(line, sizeof(line), file))
 	{
 		line_num++;
@@ -159,8 +160,15 @@ char *extract_label(const char *line, char *label)
 /* Function for loading predefined symbols. */
 void add_predefined_symbols()
 {
-	int symbols_array = strlen(predefined_symbols);
+
 	for (int i = 0; i < NUM_PREDEFINED_SYMBOLS; i++)
 	{
+		predefined_symbol current = predefined_symbols[i];
+		symtable_insert(current.name, current.address);
 	}
+}
+
+/* Function for parsing a A_instruction*/
+bool parse_A_instruction(const char *line, a_instruction *instr)
+{
 }

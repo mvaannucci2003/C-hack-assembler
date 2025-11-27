@@ -1,8 +1,16 @@
 #ifndef __HACK_H__
 #define __HACK_H__
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdint.h>
+
+typedef int16_t hack_addr;
+
 #define NUM_PREDEFINED_SYMBOLS 23
 #define MAX_SYMBOL_NAME_LENGTH 200
-typedef int16_t address;
 
 typedef enum symbol_id
 {
@@ -34,7 +42,7 @@ typedef enum symbol_id
 typedef struct predefined_symbol
 {
     char *name;
-    address address;
+    hack_addr address;
 
 } predefined_symbol;
 
@@ -62,5 +70,5 @@ static const predefined_symbol predefined_symbols[NUM_PREDEFINED_SYMBOLS] = {
     {"R4", SYM_THAT},
     {"R16384", SYM_SCREEN},
     {"R24576", SYM_KBD},
-}
+};
 #endif
