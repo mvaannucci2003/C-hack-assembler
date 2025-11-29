@@ -33,6 +33,17 @@ char *strip(char *s)
 	return s;
 }
 
+/* Function for loading predefined symbols. */
+void add_predefined_symbols()
+{
+
+	for (int i = 0; i < NUM_PREDEFINED_SYMBOLS; i++)
+	{
+		predefined_symbol current = predefined_symbols[i];
+		symtable_insert(current.name, current.address);
+	}
+}
+
 /* Function: parse
  * -------------
  * iterate each line in the file and strip whitespace and comments.
@@ -43,7 +54,7 @@ char *strip(char *s)
  */
 void parse(FILE *file)
 {
-
+	instruction instr;
 	char line[MAX_LINE_LENGTH] = {0};
 	int instr_num = 0;
 	int line_num = 0;
@@ -66,6 +77,13 @@ void parse(FILE *file)
 		if (is_Atype(line))
 		{
 			inst_type = 'A';
+
+			if (!parse_A_instruction(line, &instr.instr.a_inst))
+			{
+				exit_program(EXIT_INVALID_A_INSTR, line_num, line);
+			}
+
+			instr.inst_type = ATYPE;
 		}
 
 		if (is_label(line))
@@ -157,18 +175,33 @@ char *extract_label(const char *line, char *label)
 	return label;
 }
 
-/* Function for loading predefined symbols. */
-void add_predefined_symbols()
-{
-
-	for (int i = 0; i < NUM_PREDEFINED_SYMBOLS; i++)
-	{
-		predefined_symbol current = predefined_symbols[i];
-		symtable_insert(current.name, current.address);
-	}
-}
-
 /* Function for parsing a A_instruction*/
 bool parse_A_instruction(const char *line, a_instruction *instr)
 {
+	char *s;
+	s = malloc(strlen(line));
+	strcpy(s, line + 1);
+	char *s_end = NULL;
+
+	long result = strtol(s, &s_end, 10);
+
+	if (s == s_end)
+	{
+		instr->addr.label = malloc(strlen(s) + 1);
+		strcpy(instr->addr.label, s);
+		instr->is_addr = false;
+	}
+
+	else if (*s_end != 0)
+	{
+		return false;
+	}
+
+	else
+	{
+		instr->addr.address = result;
+		instr->is_addr = true;
+	}
+
+	return true;
 }

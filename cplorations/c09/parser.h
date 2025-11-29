@@ -64,13 +64,15 @@ typedef struct a_instruction
 	bool is_addr;
 } a_instruction;
 
+bool parse_A_instruction(const char *, a_instruction *);
+
 typedef struct instruction
 {
 	union
 	{
 		a_instruction a_inst;
 		c_instruction c_inst;
-	} inst;
+	} instr;
 	def_instr_type inst_type;
 } instruction;
 #endif
