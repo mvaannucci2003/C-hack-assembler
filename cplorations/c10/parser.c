@@ -1,5 +1,5 @@
 /****************************************
- * C-ploration 4 for CS 271
+ * C-ploration for CS 271
  *
  * [NAME] Marc Vannucci
  * [TERM] FALL 2025
@@ -48,7 +48,7 @@ char *strip(char *s)
  *
  * returns: nothing
  */
-void parse(FILE *file)
+void parse(FILE *file, instruction *instructions)
 {
 
 	char line[MAX_LINE_LENGTH] = {0};
@@ -72,6 +72,12 @@ void parse(FILE *file)
 		if (is_Atype(line))
 		{
 			inst_type = 'A';
+			if (!parse_A_instruction(line, &instr.instr.a_inst))
+			{
+				exit_program(EXIT_INVALID_A_INSTR, line_num, line);
+			}
+
+			instr.inst_type = ATYPE;
 		}
 
 		if (is_label(line))
@@ -82,6 +88,23 @@ void parse(FILE *file)
 		if (is_Ctype(line))
 		{
 			inst_type = 'C';
+			char tmp_line = MAX_LINE_LENGTH;
+			strcpy(tmp_line, line);
+			parse_C_instruction(tmp_line, &inst.inst.c.c_inst);
+			if (inst.inst.c.c_inst == DEST_INVALID)
+			{
+				exit_program(EXIT_INVALID_C_DEST, line_num, line);
+			}
+			else if (inst.inst.c.c_inst == COMP_INVALID)
+			{
+				exit_program(EXIT_INVALID_C_COMP, line_num, line);
+			}
+			else if (inst.inst.c.c_inst == JMP_INVALID)
+			{
+				exit_program(EXIT_INVALID_C_JUMP, line_num, line);
+			}
+
+			instr.inst_type = CTYPE;
 		}
 
 		if (is_label(line))
@@ -103,7 +126,8 @@ void parse(FILE *file)
 		}
 
 		printf("%u: %c  %s\n", instr_num, inst_type, line);
-		instr_num++;
+		instructions[instr_num++] = instr;
+		return instr_num;
 	}
 }
 
@@ -162,6 +186,37 @@ char *extract_label(const char *line, char *label)
 
 	label[i] = '\0';
 	return label;
+}
+
+/* Function for parsing a A_instruction*/
+bool parse_A_instruction(const char *line, a_instruction *instr)
+{
+	char *s;
+	s = malloc(strlen(line));
+	strcpy(s, line + 1);
+	char *s_end = NULL;
+
+	long result = strtol(s, &s_end, 10);
+
+	if (s == s_end)
+	{
+		instr->addr.label = malloc(strlen(s) + 1);
+		strcpy(instr->addr.label, s);
+		instr->is_addr = false;
+	}
+
+	else if (*s_end != 0)
+	{
+		return false;
+	}
+
+	else
+	{
+		instr->addr.address = result;
+		instr->is_addr = true;
+	}
+
+	return true;
 }
 
 // Function for parsing a C instruction.

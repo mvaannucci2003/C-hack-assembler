@@ -24,7 +24,7 @@ typedef int16_t opcode;
 /** function prototypes **/
 char *strip(char *s);
 
-void parse(FILE *file);
+void parse(FILE *file, instruction *instructions);
 
 /** function headers **/
 bool is_Atype(const char *);
