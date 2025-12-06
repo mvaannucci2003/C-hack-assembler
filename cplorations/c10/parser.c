@@ -8,6 +8,7 @@
 #include "parser.h"
 #include "symtable.h"
 #include "error.h"
+#include "hack.h"
 
 /* Function: strip
  * -------------
@@ -40,6 +41,17 @@ char *strip(char *s)
 	return s;
 }
 
+/* Function for loading predefined symbols. */
+void add_predefined_symbols()
+{
+
+	for (int i = 0; i < NUM_PREDEFINED_SYMBOLS; i++)
+	{
+		predefined_symbol current = predefined_symbols[i];
+		symtable_insert(current.name, current.address);
+	}
+}
+
 /* Function: parse
  * -------------
  * iterate each line in the file and strip whitespace and comments.
@@ -48,9 +60,9 @@ char *strip(char *s)
  *
  * returns: nothing
  */
-void parse(FILE *file, instruction *instructions)
+int parse(FILE *file, instruction *instructions)
 {
-
+	instruction instr;
 	char line[MAX_LINE_LENGTH] = {0};
 	int instr_num = 0;
 	int line_num = 0;
@@ -72,7 +84,7 @@ void parse(FILE *file, instruction *instructions)
 		if (is_Atype(line))
 		{
 			inst_type = 'A';
-			if (!parse_A_instruction(line, &instr.instr.a_inst))
+			if (!parse_A_instruction(line, &instr.inst.a_inst))
 			{
 				exit_program(EXIT_INVALID_A_INSTR, line_num, line);
 			}
@@ -88,18 +100,18 @@ void parse(FILE *file, instruction *instructions)
 		if (is_Ctype(line))
 		{
 			inst_type = 'C';
-			char tmp_line = MAX_LINE_LENGTH;
+			char tmp_line[MAX_LINE_LENGTH];
 			strcpy(tmp_line, line);
-			parse_C_instruction(tmp_line, &inst.inst.c.c_inst);
-			if (inst.inst.c.c_inst == DEST_INVALID)
+			parse_C_instruction(tmp_line, &instr.inst.c_inst);
+			if (instr.inst.c_inst == DEST_INVALID)
 			{
 				exit_program(EXIT_INVALID_C_DEST, line_num, line);
 			}
-			else if (inst.inst.c.c_inst == COMP_INVALID)
+			else if (instr.inst.c_inst == COMP_INVALID)
 			{
 				exit_program(EXIT_INVALID_C_COMP, line_num, line);
 			}
-			else if (inst.inst.c.c_inst == JMP_INVALID)
+			else if (instr.inst.c_inst == JMP_INVALID)
 			{
 				exit_program(EXIT_INVALID_C_JUMP, line_num, line);
 			}
@@ -124,11 +136,28 @@ void parse(FILE *file, instruction *instructions)
 			symtable_insert(n_label, instr_num);
 			continue;
 		}
-
-		printf("%u: %c  %s\n", instr_num, inst_type, line);
-		instructions[instr_num++] = instr;
-		return instr_num;
+		// printf("%u: %c  %s\n", instr_num, inst_type, line);
+		if (inst_type == ATYPE && hack_addr)
+		{
+			printf("A: %d\n", instr.inst.a_inst.is_addr);
+		}
+		else if (instruction == hack_addr)
+		{
+			printf("A: %d\n", instr.inst.a_inst.addr.address);
+		}
+		else
+		{
+			printf("A: %d\n", instr.inst.a_inst.addr.label);
+		}
 	}
+
+	if (instr.inst_type == CTYPE)
+	{
+		printf("C: d=%d, c=%d, j=%d\n", instr.inst.c_inst.dest, instr.inst.c_inst.comp, instr.inst.c_inst.jump);
+	}
+
+	instructions[instr_num++] = instr;
+	return instr_num;
 }
 
 /* type checker, this checks if our input is a Atype, label, or Ctype*/
@@ -233,11 +262,12 @@ void parse_C_instruction(char *line, c_instruction *instr)
 		dest = NULL;
 		comp = temp;
 	}
-
+	int a_temp = 0;
 	instr->jump = str_to_jumpid(jump);
-	instr->comp = str_to_compid(comp);
+	instr->comp = str_to_compid(comp, &a_temp);
 	instr->dest = str_to_destid(dest);
 
 	// ternary check.
-	instr->a = (strchr(comp, 'M') != NULL) : ? 1 : 0;
+	instr->a = a_temp;
+	instr->a = (strchr(comp, 'M') != NULL) ? 1 : 0;
 }

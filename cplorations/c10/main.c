@@ -9,8 +9,12 @@
 #include "symtable.h"
 #include "error.h"
 
+#define MAX_INSTRUCTION_COUNT 30000
+
 int main(int argc, const char *argv[])
 {
+
+	instruction *instructions = malloc(MAX_INSTRUCTION_COUNT * sizeof(instruction));
 
 	if (argc != 2)
 	{
@@ -25,9 +29,9 @@ int main(int argc, const char *argv[])
 		exit_program(EXIT_CANNOT_OPEN_FILE, argv[1]);
 	}
 
-	parse(fin);
+	int num_instructions = parse(fin, instructions);
 
 	fclose(fin);
-
+	free(instructions);
 	return 0;
 }

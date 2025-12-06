@@ -287,7 +287,7 @@ static inline comp_id str_to_compid(const char *s, int *a)
         id = COMP_DORA;
     }
 
-    a * = 0;
+    *a = 0;
     return id;
 
     if (strcmp(s, "M"))
@@ -328,9 +328,9 @@ static inline comp_id str_to_compid(const char *s, int *a)
     }
     else if (strcmp(s, "D|M"))
     {
-        id = COMP_DorM;
+        id = COMP_DORM;
     }
-    a * = 1;
+    *a = 1;
     return id;
 }
 
