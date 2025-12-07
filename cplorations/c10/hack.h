@@ -214,123 +214,128 @@ static inline dest_id str_to_destid(const char *s)
 static inline comp_id str_to_compid(const char *s, int *a)
 {
     comp_id id = COMP_INVALID;
-    if (strcmp(s, "0"))
+    if (strchr(s, 'M') != NULL)
     {
-        id = COMP_0;
+        if (!strcmp(s, "M"))
+        {
+            id = COMP_M;
+        }
+        else if (!strcmp(s, "!M"))
+        {
+            id = COMP_NOTM;
+        }
+        else if (!strcmp(s, "-M"))
+        {
+            id = COMP_NEGM;
+        }
+        else if (!strcmp(s, "M+1"))
+        {
+            id = COMP_Madd1;
+        }
+        else if (!strcmp(s, "M-1"))
+        {
+            id = COMP_Msub1;
+        }
+        else if (!strcmp(s, "D+M"))
+        {
+            id = COMP_DaddM;
+        }
+        else if (!strcmp(s, "D-M"))
+        {
+            id = COMP_DsubM;
+        }
+        else if (!strcmp(s, "M-D"))
+        {
+            id = COMP_MsubD;
+        }
+        else if (!strcmp(s, "D&M"))
+        {
+            id = COMP_DandM;
+        }
+        else if (!strcmp(s, "D|M"))
+        {
+            id = COMP_DORM;
+        }
+        *a = 1;
     }
-    else if (strcmp(s, "1"))
+    else
     {
-        id = COMP_1;
-    }
-    else if (strcmp(s, "-1"))
-    {
-        id = COMP_NEG1;
-    }
-    else if (strcmp(s, "D"))
-    {
-        id = COMP_D;
-    }
-    else if (strcmp(s, "A"))
-    {
-        id = COMP_A;
-    }
-    else if (strcmp(s, "!D"))
-    {
-        id = COMP_NOTD;
-    }
-    else if (strcmp(s, "!A"))
-    {
-        id = COMP_NOTA;
-    }
-    else if (strcmp(s, "-D"))
-    {
-        id = COMP_NEGD;
-    }
-    else if (strcmp(s, "-A"))
-    {
-        id = COMP_NEGA;
-    }
-    else if (strcmp(s, "D+1"))
-    {
-        id = COMP_Dadd1;
-    }
-    else if (strcmp(s, "A+1"))
-    {
-        id = COMP_Aadd1;
-    }
-    else if (strcmp(s, "D-1"))
-    {
-        id = COMP_Dsub1;
-    }
-    else if (strcmp(s, "A-1"))
-    {
-        id = COMP_Asub1;
-    }
-    else if (strcmp(s, "D+A"))
-    {
-        id = COMP_DandA;
-    }
-    else if (strcmp(s, "D-A"))
-    {
-        id = COMP_DsubA;
-    }
-    else if (strcmp(s, "A-D"))
-    {
-        id = COMP_AsubD;
-    }
-    else if (strcmp(s, "D&A"))
-    {
-        id = COMP_DandA;
-    }
-    else if (strcmp(s, "D|A"))
-    {
-        id = COMP_DORA;
+        if (!strcmp(s, "0"))
+        {
+            id = COMP_0;
+        }
+        else if (!strcmp(s, "1"))
+        {
+            id = COMP_1;
+        }
+        else if (!strcmp(s, "-1"))
+        {
+            id = COMP_NEG1;
+        }
+        else if (!strcmp(s, "D"))
+        {
+            id = COMP_D;
+        }
+        else if (!strcmp(s, "A"))
+        {
+            id = COMP_A;
+        }
+        else if (!strcmp(s, "!D"))
+        {
+            id = COMP_NOTD;
+        }
+        else if (!strcmp(s, "!A"))
+        {
+            id = COMP_NOTA;
+        }
+        else if (!strcmp(s, "-D"))
+        {
+            id = COMP_NEGD;
+        }
+        else if (!strcmp(s, "-A"))
+        {
+            id = COMP_NEGA;
+        }
+        else if (!strcmp(s, "D+1"))
+        {
+            id = COMP_Dadd1;
+        }
+        else if (!strcmp(s, "A+1"))
+        {
+            id = COMP_Aadd1;
+        }
+        else if (!strcmp(s, "D-1"))
+        {
+            id = COMP_Dsub1;
+        }
+        else if (!strcmp(s, "A-1"))
+        {
+            id = COMP_Asub1;
+        }
+        else if (!strcmp(s, "D+A"))
+        {
+            id = COMP_DandA;
+        }
+        else if (!strcmp(s, "D-A"))
+        {
+            id = COMP_DsubA;
+        }
+        else if (!strcmp(s, "A-D"))
+        {
+            id = COMP_AsubD;
+        }
+        else if (!strcmp(s, "D&A"))
+        {
+            id = COMP_DandA;
+        }
+        else if (!strcmp(s, "D|A"))
+        {
+            id = COMP_DORA;
+        }
+
+        *a = 0;
     }
 
-    *a = 0;
-    return id;
-
-    if (strcmp(s, "M"))
-    {
-        id = COMP_M;
-    }
-    else if (strcmp(s, "!M"))
-    {
-        id = COMP_NOTM;
-    }
-    else if (strcmp(s, "-M"))
-    {
-        id = COMP_NEGM;
-    }
-    else if (strcmp(s, "M+1"))
-    {
-        id = COMP_Madd1;
-    }
-    else if (strcmp(s, "M-1"))
-    {
-        id = COMP_Msub1;
-    }
-    else if (strcmp(s, "D+M"))
-    {
-        id = COMP_DaddM;
-    }
-    else if (strcmp(s, "D-M"))
-    {
-        id = COMP_DsubM;
-    }
-    else if (strcmp(s, "M-D"))
-    {
-        id = COMP_MsubD;
-    }
-    else if (strcmp(s, "D&M"))
-    {
-        id = COMP_DandM;
-    }
-    else if (strcmp(s, "D|M"))
-    {
-        id = COMP_DORM;
-    }
-    *a = 1;
     return id;
 }
 

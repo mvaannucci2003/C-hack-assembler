@@ -103,15 +103,15 @@ int parse(FILE *file, instruction *instructions)
 			char tmp_line[MAX_LINE_LENGTH];
 			strcpy(tmp_line, line);
 			parse_C_instruction(tmp_line, &instr.inst.c_inst);
-			if (instr.inst.c_inst == DEST_INVALID)
+			if (instr.inst.c_inst.dest == DEST_INVALID)
 			{
 				exit_program(EXIT_INVALID_C_DEST, line_num, line);
 			}
-			else if (instr.inst.c_inst == COMP_INVALID)
+			else if (instr.inst.c_inst.comp == COMP_INVALID)
 			{
 				exit_program(EXIT_INVALID_C_COMP, line_num, line);
 			}
-			else if (instr.inst.c_inst == JMP_INVALID)
+			else if (instr.inst.c_inst.jump == JMP_INVALID)
 			{
 				exit_program(EXIT_INVALID_C_JUMP, line_num, line);
 			}
@@ -137,25 +137,23 @@ int parse(FILE *file, instruction *instructions)
 			continue;
 		}
 		// printf("%u: %c  %s\n", instr_num, inst_type, line);
-		if (inst_type == ATYPE && hack_addr)
+		if (inst_type == 'A')
 		{
-			printf("A: %d\n", instr.inst.a_inst.is_addr);
+			if (instr.inst.a_inst.is_addr)
+			{
+				printf("A: %d\n", instr.inst.a_inst.addr.address);
+			}
+			else
+			{
+				printf("A: %s\n", instr.inst.a_inst.addr.label);
+			}
 		}
-		else if (instruction == hack_addr)
+
+		if (instr.inst_type == CTYPE)
 		{
-			printf("A: %d\n", instr.inst.a_inst.addr.address);
-		}
-		else
-		{
-			printf("A: %d\n", instr.inst.a_inst.addr.label);
+			printf("C: d=%d, c=%d, j=%d\n", instr.inst.c_inst.dest, instr.inst.c_inst.comp, instr.inst.c_inst.jump);
 		}
 	}
-
-	if (instr.inst_type == CTYPE)
-	{
-		printf("C: d=%d, c=%d, j=%d\n", instr.inst.c_inst.dest, instr.inst.c_inst.comp, instr.inst.c_inst.jump);
-	}
-
 	instructions[instr_num++] = instr;
 	return instr_num;
 }
