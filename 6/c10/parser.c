@@ -272,11 +272,56 @@ void parse_C_instruction(char *line, c_instruction *instr)
 
 void assemble(const char *file_name, instruction *instructions, int num_instructions)
 {
-	FILE *fin = argv[1], "r";
+	int a = 16;
+	FILE *fin;
+
 	const char *suffix = ".hack";
+	char *hack_file;
 
 	size_t new_file_length = strlen(file_name) + strlen(suffix) + 1;
-	// allocate memory for new file name.
-	// copy and append the suffix.
-	// should probably use fopen then free when closing.
+	hack_file = malloc(new_file_length);
+
+	strcpy(hack_file, file_name);
+	strcat(hack_file, suffix);
+	fin = fopen(hack_file, "w");
+
+	for (int i = 0; i < num_instructions; i++)
+	{
+		// determine the opcode for each instruction
+		instructions[i];
+
+		// if A label, lookup in symtable if new add it
+		if (instructions[i].inst_type == ATYPE && instructions[i].inst.a_inst.is_addr == false)
+		{
+
+			int label_check = symtable_find(instructions[i].inst.a_inst.addr.label);
+			if (label_check == NULL)
+			{
+				symtable_insert(instructions[i].inst.a_inst.addr.label, a);
+				a++;
+				free(instructions[i].inst.a_inst.addr.label);
+				instructions[i].inst.a_inst.addr.label = NULL;
+			}
+			else
+			{
+				instructions[i].inst.a_inst.addr.address = label_check;
+				free(instructions[i].inst.a_inst.addr.label);
+				instructions[i].inst.a_inst.addr.label = NULL;
+			}
+		}
+
+		if (instructions[i].inst_type == CTYPE)
+		{
+			int OPCODE = instruction_to_opcode(instructions[i].inst.c_inst);
+			fprintf(fin, "%c", OPCODE_TO_BINARY(OPCODE));
+		}
+
+		// free memory and set to NULL to prevent memory leaks
+		// if A address, set the opcode as the address
+		// if c-type, lookup opcode with opcode function to be built later.
+	}
+	fclose(fin);
+	// TODO: Iterate over all instructions
+
+	// TODO: Close file
 }
