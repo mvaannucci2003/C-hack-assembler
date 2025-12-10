@@ -153,8 +153,8 @@ int parse(FILE *file, instruction *instructions)
 		{
 			printf("C: d=%d, c=%d, j=%d\n", instr.inst.c_inst.dest, instr.inst.c_inst.comp, instr.inst.c_inst.jump);
 		}
+		instructions[instr_num++] = instr;
 	}
-	instructions[instr_num++] = instr;
 	return instr_num;
 }
 
@@ -199,7 +199,6 @@ bool is_Ctype(const char *line)
 }
 
 /* Label Extractor. This extracts the string inside the label. */
-
 char *extract_label(const char *line, char *label)
 {
 	int x, i;
@@ -215,7 +214,6 @@ char *extract_label(const char *line, char *label)
 	return label;
 }
 
-/* Function for parsing a A_instruction*/
 bool parse_A_instruction(const char *line, a_instruction *instr)
 {
 	char *s;
@@ -284,44 +282,56 @@ void assemble(const char *file_name, instruction *instructions, int num_instruct
 	strcpy(hack_file, file_name);
 	strcat(hack_file, suffix);
 	fin = fopen(hack_file, "w");
-
 	for (int i = 0; i < num_instructions; i++)
 	{
-		// determine the opcode for each instruction
-		instructions[i];
 
-		// if A label, lookup in symtable if new add it
+		opcode op;
 		if (instructions[i].inst_type == ATYPE && instructions[i].inst.a_inst.is_addr == false)
 		{
 
-			int label_check = symtable_find(instructions[i].inst.a_inst.addr.label);
+			Symbol *label_check = symtable_find(instructions[i].inst.a_inst.addr.label);
 			if (label_check == NULL)
 			{
 				symtable_insert(instructions[i].inst.a_inst.addr.label, a);
 				a++;
 				free(instructions[i].inst.a_inst.addr.label);
 				instructions[i].inst.a_inst.addr.label = NULL;
+				op = instructions[i].inst.a_inst.addr.address;
 			}
 			else
 			{
-				instructions[i].inst.a_inst.addr.address = label_check;
+				instructions[i].inst.a_inst.addr.address = label_check->addr;
 				free(instructions[i].inst.a_inst.addr.label);
 				instructions[i].inst.a_inst.addr.label = NULL;
+				op = instructions[i].inst.a_inst.addr.address;
 			}
+		}
+
+		if (instructions[i].inst_type == ATYPE && instructions[i].inst.a_inst.is_addr == true)
+		{
+			op = instructions[i].inst.a_inst.addr.address;
 		}
 
 		if (instructions[i].inst_type == CTYPE)
 		{
-			int OPCODE = instruction_to_opcode(instructions[i].inst.c_inst);
-			fprintf(fin, "%c", OPCODE_TO_BINARY(OPCODE));
+			op = instruction_to_opcode(instructions[i].inst.c_inst);
 		}
-
-		// free memory and set to NULL to prevent memory leaks
-		// if A address, set the opcode as the address
-		// if c-type, lookup opcode with opcode function to be built later.
+		fprintf(fin, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", OPCODE_TO_BINARY(op));
+		if (i < num_instructions - 1)
+		{
+			fprintf(fin, "\n");
+		}
 	}
 	fclose(fin);
-	// TODO: Iterate over all instructions
+}
 
-	// TODO: Close file
+opcode instruction_to_opcode(c_instruction instr)
+{
+	opcode op = 0;
+	op |= (7 << 13);
+	op |= (instr.a << 12);
+	op |= (instr.comp << 6);
+	op |= (instr.dest << 3);
+	op |= (instr.jump << 0);
+	return op;
 }
