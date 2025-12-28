@@ -63,6 +63,10 @@ typedef struct predefined_symbol
 
 } predefined_symbol;
 
+// Test function
+
+const struct predefined_symbol *defined_register_search(char *name);
+
 static const predefined_symbol predefined_symbols[NUM_PREDEFINED_SYMBOLS] = {
     {"R0", SYM_R0},
     {"R1", SYM_R1},

@@ -136,7 +136,7 @@ int parse(FILE *file, instruction *instructions)
 			symtable_insert(n_label, instr_num);
 			continue;
 		}
-		// printf("%u: %c  %s\n", instr_num, inst_type, line);
+
 		if (inst_type == 'A')
 		{
 			if (instr.inst.a_inst.is_addr)
@@ -282,46 +282,51 @@ void assemble(const char *file_name, instruction *instructions, int num_instruct
 	strcpy(hack_file, file_name);
 	strcat(hack_file, suffix);
 	fin = fopen(hack_file, "w");
+	opcode op;
 	for (int i = 0; i < num_instructions; i++)
 	{
 
-		opcode op;
 		if (instructions[i].inst_type == ATYPE && instructions[i].inst.a_inst.is_addr == false)
 		{
 
-			Symbol *label_check = symtable_find(instructions[i].inst.a_inst.addr.label);
-			if (label_check == NULL)
+			const struct predefined_symbol *predefined_value = defined_register_search(instructions[i].inst.a_inst.addr.label);
+			// TODO: make the string comp to
+			if (predefined_value != NULL)
 			{
-				symtable_insert(instructions[i].inst.a_inst.addr.label, a);
-				a++;
-				free(instructions[i].inst.a_inst.addr.label);
-				instructions[i].inst.a_inst.addr.label = NULL;
+				instructions[i].inst.a_inst.addr.address = predefined_value->address;
 				op = instructions[i].inst.a_inst.addr.address;
 			}
 			else
 			{
-				instructions[i].inst.a_inst.addr.address = label_check->addr;
-				free(instructions[i].inst.a_inst.addr.label);
-				instructions[i].inst.a_inst.addr.label = NULL;
-				op = instructions[i].inst.a_inst.addr.address;
-			}
-		}
+				Symbol *label_check = symtable_find(instructions[i].inst.a_inst.addr.label);
 
-		if (instructions[i].inst_type == ATYPE && instructions[i].inst.a_inst.is_addr == true)
-		{
-			op = instructions[i].inst.a_inst.addr.address;
+				if (label_check == NULL)
+				{
+					symtable_insert(instructions[i].inst.a_inst.addr.label, a);
+					op = a;
+					a++;
+				}
+				else
+				{
+					instructions[i].inst.a_inst.addr.address = label_check->addr;
+					op = instructions[i].inst.a_inst.addr.address;
+				}
+			}
 		}
 
 		if (instructions[i].inst_type == CTYPE)
 		{
 			op = instruction_to_opcode(instructions[i].inst.c_inst);
 		}
+
 		fprintf(fin, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", OPCODE_TO_BINARY(op));
+
 		if (i < num_instructions - 1)
 		{
 			fprintf(fin, "\n");
 		}
 	}
+
 	fclose(fin);
 }
 
