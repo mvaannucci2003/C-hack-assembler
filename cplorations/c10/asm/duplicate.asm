@@ -1,5 +1,0 @@
-@R0
-(LOOP)
-D=M
-(LOOP)
-@R1
